@@ -19,14 +19,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.waffle.viewmodel.WaffleViewModel
+import com.solana.mobilewalletadapter.clientlib.ActivityResultSender
+import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.compose.runtime.collectAsState
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WaffleCard(
+    identityUri: Uri,
+    iconUri: Uri,
+    identityName: String,
     modifier: Modifier = Modifier,
+    intentSender: ActivityResultSender,
+    waffleViewModel: WaffleViewModel = hiltViewModel()
 ) {
     var waffle by remember { mutableStateOf("") }
+    val viewState = waffleViewModel.viewState.collectAsState().value
 
 
     Column(
@@ -46,7 +59,9 @@ fun WaffleCard(
         OutlinedTextField(value = waffle, onValueChange = { waffle = it })
         Spacer(modifier = Modifier.height(8.dp))
         Button(
-            onClick = {}
+            onClick = {
+                waffleViewModel.incrementCounter(identityUri, iconUri, identityName, intentSender, waffle)
+            }
         ) {
             Text(text = "Tap me!")
         }
